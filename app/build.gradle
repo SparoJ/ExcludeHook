@@ -1,0 +1,64 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        applicationId "coder.siy.test"
+        minSdkVersion 14
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
+
+    signingConfigs {
+        keyTest {
+            keyAlias  gradle.keyAlias
+            keyPassword gradle.keyPassword
+            storeFile file('.jks')
+            storePassword gradle.storePassword
+            v2SigningEnabled false
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            resValue "string", "baiduKey", gradle.baidukey
+//            signingConfig signingConfigs.keyTest
+        }
+        debug{
+            resValue "string", "baiduKey", gradle.baidukey
+//            signingConfig signingConfigs.keyTest
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+//    implementation project(path: ':library-exclude', configuration: 'exclude')
+    implementation project(":library")
+}
+
+
+
+
+task keyStoreMsg(type: Exec) {
+    group "siy"
+    description "将keyStore信息打印出来"
+    commandLine "cmd", "/c", "keytool -v -list -keystore .jks"
+}
